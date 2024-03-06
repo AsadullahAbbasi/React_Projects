@@ -13,6 +13,6 @@ The Password Changer is a simple tool that allows users to generate strong and s
 
 1. Clone the repository:
 2. Run the following Commands:
-3. `npm i`
-4. `npm run dev`
-5. Deployed link: [https://asad-react-projects.surge.sh/](https://asad-react-projects.surge.sh/)
+   3. `npm i`
+   4. `npm run dev`
+   5. Deployed link: [https://asad-react-projects.surge.sh/](https://asad-react-projects.surge.sh/)
