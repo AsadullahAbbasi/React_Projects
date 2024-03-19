@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
-import "../App.css";
+import "./PasswordGenerator.css";
 
 const Passwordgenerator = () => {
   const [Password, setPassword] = useState("");
@@ -7,7 +7,7 @@ const Passwordgenerator = () => {
   const [char, setChar] = useState(false);
   const [num, setNum] = useState(false);
   const InputElem = useRef();
-
+ 
   const generatePassword = useCallback(() => {
     console.log("comp rendered");
     let temp_Password = "";
