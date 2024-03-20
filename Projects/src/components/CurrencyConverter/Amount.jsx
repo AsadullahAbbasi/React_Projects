@@ -5,6 +5,7 @@ import Select from "react-select";
 import flags from "./flagData.js";
 
 const Amount = () => {
+
   const [curList, setCurList] = useState([]);
   const [swap, setSwap] = useState(false);
 
@@ -49,30 +50,24 @@ const Amount = () => {
       setDisplayAmount("");
     }
   };
-  console.log(userAmount);
 
-  const swaper = () => {
-    setSwap(!swap);
-    setFromCur(toCur);
-    setToCur(fromCur);
-    setDisplayAmount(0);
-    setUSerAmount(0);
-  };
   const handleFrom = async ({ value }) => {
     setFromCur(value);
-    fetch(
-      `https://raw.githubusercontent.com/Lissy93/currency-flags/master/assets/flags_svg/${value.toLowerCase()}.svg`
-    ).then((res) => {
-      if (res.status === 404) {
-        setFlagFrom(
-          "https://images.rawpixel.com/image_png_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTEwL3JtNTg2LWZyb3duaW5nZmFjZS0wM18zLWw5ZDNieHByLnBuZw.png"
-        );
-      } else {
-        setFlagFrom(
-          `https://raw.githubusercontent.com/Lissy93/currency-flags/master/assets/flags_svg/${value.toLowerCase()}.svg`
-        );
+    try {
+      const response = await fetch(
+        `https://raw.githubusercontent.com/Lissy93/currency-flags/master/assets/flags_svg/${value.toLowerCase()}.svg`
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch currency flag");
       }
-    });
+      const flagUrl = `https://raw.githubusercontent.com/Lissy93/currency-flags/master/assets/flags_svg/${value.toLowerCase()}.svg`;
+      setFlagFrom(flagUrl);
+    } catch (error) {
+      console.log(error);
+      setFlagFrom(
+        "https://images.rawpixel.com/image_png_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTEwL3JtNTg2LWZyb3duaW5nZmFjZS0wM18zLWw5ZDNieHByLnBuZw.png"
+      );
+    }
 
     setUSerAmount("");
     setDisplayAmount("");
@@ -80,26 +75,38 @@ const Amount = () => {
 
   const handleTo = async ({ value }) => {
     setToCur(value);
-    fetch(
-      `https://raw.githubusercontent.com/Lissy93/currency-flags/master/assets/flags_svg/${value.toLowerCase()}.svg`
-    ).then((res) => {
- 
-      
-        setFlagto(
-          `https://raw.githubusercontent.com/Lissy93/currency-flags/master/assets/flags_svg/${value.toLowerCase()}.svg`
-        )
-    
-    }).catch((error)=>{
+    try {
+      const response = await fetch(
+        `https://raw.githubusercontent.com/Lissy93/currency-flags/master/assets/flags_svg/${value.toLowerCase()}.svg`
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch currency flag");
+      }
+      const flagUrl = `https://raw.githubusercontent.com/Lissy93/currency-flags/master/assets/flags_svg/${value.toLowerCase()}.svg`;
+      setFlagto(flagUrl);
+    } catch (error) {
       console.log(error);
       setFlagto(
         "https://images.rawpixel.com/image_png_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTEwL3JtNTg2LWZyb3duaW5nZmFjZS0wM18zLWw5ZDNieHByLnBuZw.png"
       );
-
-    })
+    }
 
     setUSerAmount("");
     setDisplayAmount("");
   };
+
+  const swaper = () => {
+    setSwap(!swap);
+    const tempCur = fromCur;
+    setFromCur(toCur);
+    setToCur(tempCur);
+    setDisplayAmount(0);
+    setUSerAmount(0);
+    // Call handleFrom and handleTo with updated values
+    handleFrom({ value: toCur });
+    handleTo({ value: fromCur });
+  };
+
   return (
     <section className="w-full">
       <div className="max-w-[1440px] mx-auto text-center px-4">
@@ -112,17 +119,15 @@ const Amount = () => {
               <div className="flex  gap-[13px] sm:justify-center  justify-between  ">
                 <img
                   className="rounded-full w-[45px] h-[45px]  object-cover"
-                  src={swap ? flagto : flagfrom}
+                  src={flagfrom}
                   alt=""
                 />
                 <Select
-                
-                 onFocus={() => {
-                  setFromCur(""); 
-                }}
+                  onFocus={() => {
+                    setFromCur("");
+                  }}
                   options={currencies}
                   value={{ value: fromCur, label: fromCur.toLocaleUpperCase() }}
-
                   className="text-[#26278D] font-medium max-w-[175px] flex-1  text-xs sm:text-lg"
                   maxMenuHeight={60}
                   onChange={handleFrom}
@@ -130,8 +135,7 @@ const Amount = () => {
                   styles={{
                     input: (provided) => ({
                       ...provided,
-                      minWidth: "100px", 
-                   
+                      minWidth: "100px",
                     }),
                   }}
                 />
@@ -145,10 +149,10 @@ const Amount = () => {
                   className="outline-none bg-[#EFEFEF] rounded-lg  py-[10px] max-h-10 max-w-[175px] sm:max-w-[] pr-[28px]  text-right  "
                   onChange={handleAmount}
                   value={swap ? displayAmount : userAmount}
-                  onClick={()=>{
-                    if(userAmount===0){
+                  onClick={() => {
+                    if (userAmount === 0) {
                       setUSerAmount("");
-                      setDisplayAmount("")
+                      setDisplayAmount("");
                     }
                   }}
                 />
@@ -174,14 +178,12 @@ const Amount = () => {
               <div className=" flex  gap-[13px] sm:justify-center  justify-between ">
                 <img
                   className="rounded-full w-[45px] h-[45px]  object-cover"
-                  src={swap ? flagfrom : flagto}
+                  src={flagto}
                   alt=""
                 />
                 <Select
-                
                   onFocus={() => {
-                    setToCur("")
-                   
+                    setToCur("");
                   }}
                   onChange={handleTo}
                   options={currencies}
@@ -193,9 +195,7 @@ const Amount = () => {
                   styles={{
                     input: (provided) => ({
                       ...provided,
-                      minWidth: "120px", 
-                    
-                   
+                      minWidth: "120px",
                     }),
                   }}
                 />
@@ -214,10 +214,14 @@ const Amount = () => {
             </div>
           </div>
         </div>
-          <div className="flex flex-col gap-0 pt-5" >
-            <p className="text-[#A1A1A1] font-roboto text-sm  md:text-2xl " >Indicative Exchange Rate</p>
-            <p className="text-black font-medium text-sm md:text" >1 {fromCur} = {curVal} {toCur} </p>
-          </div>
+        <div className="flex flex-col gap-0 pt-5">
+          <p className="text-[#A1A1A1] font-roboto text-sm  md:text-2xl ">
+            Indicative Exchange Rate
+          </p>
+          <p className="text-black font-medium text-sm md:text">
+            1 {fromCur} = {curVal} {toCur}{" "}
+          </p>
+        </div>
       </div>
     </section>
   );

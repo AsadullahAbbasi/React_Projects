@@ -2,6 +2,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 
 const Test = () => {
   const [state, setState] = useState(0);
+  const [st2,setSt2] = useState(0)
 
   // Declare originalFunction before using it
   const originalFunction = () => {
@@ -27,6 +28,12 @@ const Test = () => {
     <div>
       <h1>Parent Component</h1>
       <button onClick={handleClick}>Click {state}</button>
+      <button onClick={()=>{
+        if(state>4){
+          setSt2(st2+1)
+          log
+        }
+      }} >Click{st2}</button>
     </div>
   );
 };
